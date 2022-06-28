@@ -46,11 +46,12 @@ const readActionsByName = async (endpoint, parsed, name) => {
       id: workflow.id,
       name: workflow.name,
       icon: 'fa-brands fa-github',
-      repository: uriHelpers.concatUrl([
-        'https://',
+      link: uriHelpers.concatUrl([
+        (parsed.schema || 'https') + '://',
         parsed.domain,
         parsed.pathList[0],
-        parsed.pathList[1]
+        parsed.pathList[1],
+        'actions'
       ])
     },
     runs: runs.data.workflow_runs.map((r) => ({
@@ -59,7 +60,10 @@ const readActionsByName = async (endpoint, parsed, name) => {
       url: r.html_url,
       status: r.conclusion || r.status,
       time: timeHelpers.fromDateToEpoch(r.created_at),
-      message: r.head_commit.message
+      message: r.head_commit.message,
+      duration:
+        timeHelpers.fromDateToEpoch(r.updated_at) -
+        timeHelpers.fromDateToEpoch(r.created_at)
     }))
   }
 }

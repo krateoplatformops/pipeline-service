@@ -2,6 +2,7 @@ const express = require('express')
 const router = express.Router()
 const uriHelpers = require('../helpers/uri.helpers')
 const gitHubHelpers = require('../helpers/github.helpers')
+const jenkinsHelpers = require('../helpers/jenkins.helpers')
 const stringHelpers = require('../helpers/string.helpers')
 const { logger } = require('../helpers/logger.helpers')
 
@@ -12,12 +13,22 @@ router.get('/pipeline/:url/:endpoint/:name', async (req, res, next) => {
     const endpoint = JSON.parse(stringHelpers.b64toAscii(req.params.endpoint))
 
     logger.debug(endpoint)
+    let content = null
 
     switch (endpoint?.type) {
       case 'github':
-        const content = await gitHubHelpers.readActionsByName(
+        content = await gitHubHelpers.readActionsByName(
           endpoint,
           parsed,
+          stringHelpers.b64toAscii(req.params.name)
+        )
+        res.status(200).json({
+          content: content
+        })
+        break
+      case 'jenkins':
+        content = await jenkinsHelpers.readBuildHistory(
+          endpoint,
           stringHelpers.b64toAscii(req.params.name)
         )
         res.status(200).json({
