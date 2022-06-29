@@ -46,7 +46,7 @@ const readBuildHistory = async (endpoint, name) => {
       id: r.id,
       branch: r.displayName,
       url: r.url,
-      status: r.result.toLowerCase(),
+      status: (r.result || 'unknown').toLowerCase(),
       time: timeHelpers.fromDateToEpoch(r.timestamp),
       message: r.fullDisplayName,
       duration: parseInt(r.duration / 1000)
