@@ -12,7 +12,7 @@ router.get('/pipeline/:url/:endpoint/:name', async (req, res, next) => {
 
     const endpoint = JSON.parse(stringHelpers.b64toAscii(req.params.endpoint))
 
-    logger.debug(endpoint)
+    logger.debug(JSON.stringify(endpoint, null, 2))
     let content = null
 
     switch (endpoint?.type) {
@@ -39,6 +39,7 @@ router.get('/pipeline/:url/:endpoint/:name', async (req, res, next) => {
         throw new Error(`Unsupported endpoint ${parsed.domain}`)
     }
   } catch (error) {
+    logger.debug(JSON.stringify(error, null, 2))
     next(error)
   }
 })
