@@ -2,16 +2,23 @@ const axios = require('axios')
 const uriHelpers = require('./uri.helpers')
 const timeHelpers = require('./time.helpers')
 const stringHelpers = require('./string.helpers')
+const { logger } = require('./logger.helpers')
 
 const readBuildHistory = async (endpoint, name) => {
   const regex = /(?<=\[)[^\]\[]*(?=])/gm
   const jobs = name.match(regex)
+  const nm = name.split(']')
 
   const baseUrl = uriHelpers.concatUrl([
     endpoint.target,
-    ...jobs.map((x) => `job/${x}`)
+    ...jobs.map((x) => `job/${x}`),
+    'job',
+    nm[nm.length - 1].trim()
   ])
   let url = uriHelpers.concatUrl([baseUrl, 'api/json?tree=allBuilds[*]'])
+
+  logger.debug(baseUrl)
+  logger.debug(url)
 
   const token = endpoint.secret.find((x) => x.key === 'token')
   const username = endpoint.secret.find((x) => x.key === 'username')
@@ -24,7 +31,10 @@ const readBuildHistory = async (endpoint, name) => {
     }
   })
 
-  const nm = name.split(']')
+  logger.debug(
+    `Authorization: ${stringHelpers.to64(username.val + ':' + token.val)}`
+  )
+
   return {
     pipeline: {
       id: name,
