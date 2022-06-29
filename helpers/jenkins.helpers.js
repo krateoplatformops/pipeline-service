@@ -11,9 +11,9 @@ const readBuildHistory = async (endpoint, name) => {
 
   const baseUrl = uriHelpers.concatUrl([
     endpoint.target,
-    ...jobs.map((x) => `job/${x}`),
+    ...jobs.map((x) => `job/${encodeURIComponent(x)}`),
     'job',
-    nm[nm.length - 1].trim()
+    encodeURIComponent(nm[nm.length - 1].trim())
   ])
   let url = uriHelpers.concatUrl([baseUrl, 'api/json?tree=allBuilds[*]'])
 
