@@ -12,9 +12,11 @@ app.use(responseTime({ suffix: false, digits: 0 }))
 
 /* Middlewares */
 const callLoggerMiddleware = require('./middlewares/call-logger.middleware')
+const listMiddleware = require('./middlewares/list.middleware')
 const errorLoggerMiddleware = require('./middlewares/error-logger.middleware')
 
 app.use(callLoggerMiddleware)
+app.use(listMiddleware)
 
 /* Routes */
 const statusRoutes = require('./routes/status.routes')

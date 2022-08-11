@@ -1,42 +1,36 @@
 const express = require('express')
 const router = express.Router()
-const uriHelpers = require('../helpers/uri.helpers')
 const gitHubHelpers = require('../helpers/github.helpers')
 const jenkinsHelpers = require('../helpers/jenkins.helpers')
-const stringHelpers = require('../helpers/string.helpers')
 const { logger } = require('../helpers/logger.helpers')
+const secretHelpers = require('../helpers/secret.helpers')
 
-router.get('/pipeline/:url/:endpoint/:name', async (req, res, next) => {
+router.get('/:endpointName/:pipelines', async (req, res, next) => {
   try {
-    const parsed = uriHelpers.parse(stringHelpers.b64toAscii(req.params.url))
+    const endpointName = req.params.endpointName
+    const pipelines = req.params.pipelines
 
-    const endpoint = JSON.parse(stringHelpers.b64toAscii(req.params.endpoint))
+    // get endpoint
+    const endpoint = await secretHelpers.getEndpoint(endpointName)
+    logger.debug(endpoint)
 
-    logger.debug(JSON.stringify(endpoint, null, 2))
-    let content = null
+    if (!endpoint) {
+      return res.status(404).send({ message: 'Endpoint not found' })
+    }
 
-    switch (endpoint?.type) {
+    switch (endpoint.metadata.type) {
       case 'github':
-        content = await gitHubHelpers.readActionsByName(
-          endpoint,
-          parsed,
-          stringHelpers.b64toAscii(req.params.name)
-        )
         res.status(200).json({
-          content: content
+          list: await gitHubHelpers.readActionsByName(endpoint, pipelines)
         })
         break
       case 'jenkins':
-        content = await jenkinsHelpers.readBuildHistory(
-          endpoint,
-          stringHelpers.b64toAscii(req.params.name)
-        )
         res.status(200).json({
-          content: content
+          list: await jenkinsHelpers.readBuildHistory(endpoint, pipelines)
         })
         break
       default:
-        throw new Error(`Unsupported endpoint ${parsed.domain}`)
+        throw new Error(`Unsupported endpoint type ${endpoint.metadata.type}`)
     }
   } catch (error) {
     logger.debug(JSON.stringify(error, null, 2))
