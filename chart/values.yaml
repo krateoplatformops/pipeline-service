@@ -69,7 +69,7 @@ podEnv:
     value: info
 
 ingress:
-  enabled: true
+  enabled: false
   annotations:
     kubernetes.io/ingress.class: kong
   host: pipeline.krateo.site
