@@ -1,13 +1,12 @@
 const axios = require('axios')
-const uriHelpers = require('./uri.helpers')
-const timeHelpers = require('./time.helpers')
+const uriHelpers = require('../service-library/helpers/uri.helpers')
+const timeHelpers = require('../service-library/helpers/time.helpers')
 
 const readActionsByName = async (endpoint, pipelines) => {
-  const token = endpoint.data.find((x) => x.key === 'token')
+  const token = endpoint.data.token
   const headers = {
-    Authorization: `token ${token.val}`
+    Authorization: `token ${token}`
   }
-
   const regex = /(?<=\[)[^\]\[]*(?=])/gm
 
   return await Promise.all(

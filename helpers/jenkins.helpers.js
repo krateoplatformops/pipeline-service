@@ -1,14 +1,14 @@
 const axios = require('axios')
-const uriHelpers = require('./uri.helpers')
-const timeHelpers = require('./time.helpers')
-const stringHelpers = require('./string.helpers')
-const { logger } = require('./logger.helpers')
+const uriHelpers = require('../service-library/helpers/uri.helpers')
+const timeHelpers = require('../service-library/helpers/time.helpers')
+const stringHelpers = require('../service-library/helpers/string.helpers')
+const { logger } = require('../service-library/helpers/logger.helpers')
 
 const readBuildHistory = async (endpoint, pipelines) => {
-  const token = endpoint.data.find((x) => x.key === 'token')
-  const username = endpoint.data.find((x) => x.key === 'username')
+  const token = endpoint.data.token
+  const username = endpoint.data.username
   const headers = {
-    Authorization: `Basic ${stringHelpers.to64(username.val + ':' + token.val)}`
+    Authorization: `Basic ${stringHelpers.to64(username + ':' + token)}`
   }
   logger.debug(headers)
 
@@ -28,7 +28,6 @@ const readBuildHistory = async (endpoint, pipelines) => {
       ])
       let url = uriHelpers.concatUrl([baseUrl, 'api/json?tree=allBuilds[*]'])
 
-      logger.debug(baseUrl)
       logger.debug(url)
 
       const history = await axios.get(url, {

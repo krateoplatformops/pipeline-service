@@ -11,9 +11,9 @@ app.use(express.urlencoded({ extended: false }))
 app.use(responseTime({ suffix: false, digits: 0 }))
 
 /* Middlewares */
-const callLoggerMiddleware = require('./middlewares/call-logger.middleware')
-const listMiddleware = require('./middlewares/list.middleware')
-const errorLoggerMiddleware = require('./middlewares/error-logger.middleware')
+const callLoggerMiddleware = require('./service-library/middlewares/call-logger.middleware')
+const listMiddleware = require('./service-library/middlewares/list.middleware')
+const errorLoggerMiddleware = require('./service-library/middlewares/error-logger.middleware')
 
 app.use(callLoggerMiddleware)
 app.use(listMiddleware)
