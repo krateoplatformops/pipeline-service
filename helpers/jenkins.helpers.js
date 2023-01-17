@@ -2,7 +2,7 @@ const axios = require('axios')
 const uriHelpers = require('../service-library/helpers/uri.helpers')
 const timeHelpers = require('../service-library/helpers/time.helpers')
 const stringHelpers = require('../service-library/helpers/string.helpers')
-const { logger } = require('../service-library/helpers/logger.helpers')
+const logger = require('../service-library/helpers/logger.helpers')
 
 const readBuildHistory = async (endpoint, pipelines) => {
   const token = endpoint.data.token
